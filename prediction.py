@@ -1,7 +1,9 @@
 import requests, pickle
 # from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-def predictions(url:str, text:list, tokenizer):
+# from google.protobuf.json_format import MessageToJson
+
+def predictions( text:list, tokenizer, version:int):
     """
     It takes a URL, a list of text, and a tokenizer, and returns the response from the TensorFlow
     Serving server
@@ -17,21 +19,18 @@ def predictions(url:str, text:list, tokenizer):
     inference_sent = tokenizer.texts_to_sequences(text)
     testing_padded = pad_sequences(inference_sent, maxlen=120)
     data = {"instances": testing_padded.tolist()}
-
-    response =  requests.post(url, json=data)
-    return response.content
+    URL = f"http://localhost:8501/v1/models/saved_model/versions/{version}:predict"
+    response =  requests.post(URL, json=data)
+    return response.content, type(response.content)
     
 # Print the response
 # print(response.json())
 if __name__=="__main__":
-    print('Checking....')
     sentences = []
     tokenizer = None
-    URL = "http://localhost:8501/v1/models/saved_model:predict"
     with open('tokenizer.pickle', 'rb') as handle:
-        print('loading pickle')
+        print('Loading Tokenizer...')
         tokenizer = pickle.load(handle)
-        print('loaded pickle')
 
     while True:
     # Prompt the user to enter a sentence
@@ -44,4 +43,5 @@ if __name__=="__main__":
         # Add the sentence to the list
         sentences.append(sentence)
     print(sentences)
-    print(predictions(URL, sentences, tokenizer))
+
+    print(predictions(sentences, tokenizer, 3))

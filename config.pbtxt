@@ -4,8 +4,7 @@ model_config_list {
     base_path: "/models/",
     model_platform: "tensorflow",
     model_version_policy {
-      specific {
-        versions: 1
+      all {
       }
     }
   }
