@@ -43,5 +43,5 @@ if __name__=="__main__":
         # Add the sentence to the list
         sentences.append(sentence)
     print(sentences)
-
-    print(predictions(sentences, tokenizer, 3))
+    pres, pred_tp = predictions(sentences, tokenzier, 3)
+    print(preds, pred_tp)
